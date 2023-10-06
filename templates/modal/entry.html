@@ -1,0 +1,32 @@
+{% macro entry_modal() %}
+
+<div class="modal fade" id="newEntryModal" tabindex="-1" aria-labelledby="newEntryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newEntryModalLabel">Neuer Zeiteintrag</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="task" class="form-label">Aufgabe</label>
+                    <input type="text" class="form-control" id="task">
+                </div>
+                <div class="mb-3">
+                    <label for="spentTime" class="form-label">Verbrachte Zeit in Minuten</label>
+                    <input type="number" class="form-control" id="spentTime">
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Datum</label>
+                    <input type="date" class="form-control" id="date">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+                <button type="button" class="btn btn-primary" id="saveNewEntry">Speichern</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endmacro entry_modal %}

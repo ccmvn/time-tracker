@@ -1,0 +1,32 @@
+[package]
+name = "time-tracker"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.32.0", features = ["full"] }
+actix-web = "4.4.0"
+actix-session = { version = "0.8.0", features = ["cookie-session"] }
+actix-rt = "2.2"
+actix-cors = "0.6.4"
+actix-service = "2.0.2"
+sqlx = { version = "0.7.2", features = ["runtime-tokio-native-tls", "sqlite"] }
+chrono = "0.4"
+tera = "1.12"
+async-trait = "0.1.51"
+dotenv = "0.15"
+anyhow = "1.0.75"
+env_logger = "0.10.0"
+log = "0.4"
+walkdir = "2.4.0"
+serde = { version = "1.0.144", features = ["derive"] }
+serde_json = "1.0.85"
+bcrypt = "0.15.0"
+lazy_static = "1.4.0"
+serde_derive = "1.0.188"
+toml = "0.8.1"
+futures = "0.3.28"
+futures-util = "0.3.28"
+regex = "1.0"

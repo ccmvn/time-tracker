@@ -1,0 +1,30 @@
+{% macro edit_absence_modal() %}
+
+<div class="modal fade" id="editAbsenceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Abwesenheit bearbeiten</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editAbsenceForm">
+                    <div class="form-group mb-3">
+                        <label for="editAbsenceReason">Grund der Abwesenheit:</label>
+                        <input type="text" id="editAbsenceReason" class="form-control">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="editAbsenceDate">Datum der Abwesenheit:</label>
+                        <input type="date" id="editAbsenceDate" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+                <button id="saveEditAbsence" type="button" class="btn btn-primary">Speichern</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endmacro edit_absence_modal %}

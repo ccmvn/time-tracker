@@ -1,0 +1,50 @@
+{% extends "app" %}
+
+{% block content %}
+
+<div class="vh-100 d-flex justify-content-center align-items-center">
+    <div class="row">
+        <div class="col-md-20 mx-auto">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Timetracker</h5>
+                    <form method="post" action="/login">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Benutzername</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Passwort</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Anmelden</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if show_toast %}
+    <div class="toast bg-danger position-fixed top-0 end-0 me-3 mt-3" role="alert" aria-live="assertive"
+         aria-atomic="true" id="loginFailedToast">
+        <div class="toast-body text-white">
+            Falscher Benutzername oder Passwort.
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if show_toast %}
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        if (typeof bootstrap !== 'undefined') {
+            const toastEl = document.getElementById('loginFailedToast');
+            if (toastEl) {
+                const toast = new bootstrap.Toast(toastEl, {autohide: true, delay: 3000});
+                toast.show();
+            }
+        }
+    });
+</script>
+{% endif %}
+
+{% endblock content %}

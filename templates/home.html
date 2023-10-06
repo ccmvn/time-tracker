@@ -1,0 +1,391 @@
+{% extends "app" %}
+{% import "navbar" as navbar %}
+{% import "entry" as entry %}
+{% import "edit_entry" as edit_entry %}
+{% import "absence" as absence %}
+{% import "edit_absence" as edit_absence %}
+
+{% block content %}
+
+{{ navbar::navbar(username=username, authority=authority) }}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        Informationen
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-header">
+                                    <i class="bi bi-clock"></i>
+                                    Gesamtzeit
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-dot"></i> Minuten gesamt: <span class="badge bg-primary">{{ total_minutes }}</span>
+                                        </li>
+                                        <li><i class="bi bi-dot"></i> Stunden gesamt: <span class="badge bg-success">{{ total_hours }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-header">
+                                    <i class="bi bi-calendar-x"></i>
+                                    Gesamte Fehltage
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-dot"></i> Fehltage gesamt: <span class="badge bg-danger">{{ total_absence_days }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="p-1">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="time-entries-tab" data-bs-toggle="tab" href="#time-entries"
+                               role="tab" aria-controls="time-entries" aria-selected="true">Zeiteinträge</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="absences-tab" data-bs-toggle="tab" href="#absences" role="tab"
+                               aria-controls="absences" aria-selected="false">Fehlzeiten</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <!-- Tab panes -->
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="time-entries" role="tabpanel"
+                             aria-labelledby="time-entries-tab">
+                            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#newEntryModal">
+                                Neuer Eintrag
+                            </button>
+
+                            <!-- Table for time entries -->
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="sortable" data-sort="index"># <span class="sort-arrow">&#8597;</span>
+                                    </th>
+                                    <th scope="col" class="sortable" data-sort="task">Aufgabe <span class="sort-arrow">&#8597;</span>
+                                    </th>
+                                    <th scope="col" class="sortable" data-sort="spent_time">Verbrachte Zeit (in Minuten)
+                                        <span class="sort-arrow">&#8597;</span></th>
+                                    <th scope="col" class="sortable" data-sort="date">Datum <span class="sort-arrow">&#8597;</span>
+                                    </th>
+                                    <th scope="col">Aktionen</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for entry in time_entries %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td>{{ entry.task }}</td>
+                                    <td>{{ entry.spent_time }}</td>
+                                    <td>{{ entry.date }}</td>
+                                    <td>
+                                        <button class="btn btn-primary edit-time-entry-button"
+                                                data-entry-id="{{ entry.id }}">Bearbeiten
+                                        </button>
+                                        <button class="btn btn-danger delete-time-entry-button"
+                                                data-entry-id="{{ entry.id }}">Löschen
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="absences" role="tabpanel" aria-labelledby="absences-tab">
+                            <button class="btn btn-primary mb-3" data-bs-toggle="modal"
+                                    data-bs-target="#newAbsenceModal">
+                                Neuer Eintrag
+                            </button>
+                            <!-- Table for absence entries -->
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="sortable" data-sort="index"># <span class="sort-arrow">&#8597;</span>
+                                    </th>
+                                    <th scope="col" class="sortable" data-sort="reason">Grund der Abwesenheit <span
+                                            class="sort-arrow">&#8597;</span></th>
+                                    <th scope="col" class="sortable" data-sort="date">Datum <span class="sort-arrow">&#8597;</span>
+                                    </th>
+                                    <th scope="col">Aktionen</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for absence in absence_entries %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td>{{ absence.reason }}</td>
+                                    <td>{{ absence.absence_date }}</td>
+                                    <td>
+                                        <button class="btn btn-primary edit-absence-button"
+                                                data-absence-id="{{ absence.id }}">Bearbeiten
+                                        </button>
+                                        <button class="btn btn-danger delete-absence-button"
+                                                data-absence-id="{{ absence.id }}">Löschen
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Entry Modal -->
+{{ entry::entry_modal() }}
+
+<!-- Absence Modal -->
+{{ edit_entry::edit_entry_modal() }}
+
+<!-- Absence Modal -->
+{{ absence::absence_modal() }}
+
+<!-- Edit Absence Modal -->
+{{ edit_absence::edit_absence_modal() }}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTabParam = urlParams.get('tab');
+
+        if (activeTabParam) {
+            const activeTabElement = document.querySelector(`[aria-controls="${activeTabParam}"]`);
+            if (activeTabElement) {
+                new bootstrap.Tab(activeTabElement).show();
+            }
+        }
+
+        document.querySelectorAll('.nav-link').forEach(navLink => {
+            navLink.addEventListener('shown.bs.tab', function (event) {
+                const tabName = event.target.getAttribute('aria-controls');
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('tab', tabName);
+                history.replaceState({}, '', newUrl);
+            });
+        });
+
+        // Utility function for fetch operations
+        async function performFetch(endpoint, data) {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || `Error status: ${response.status}, statusText: ${response.statusText}`);
+            }
+
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            }
+
+            throw new Error("Received content type is not JSON");
+        }
+
+        // Add new time entry
+        document.getElementById('saveNewEntry').addEventListener('click', async function () {
+            const task = document.getElementById('task').value;
+            const spentTime = parseInt(document.getElementById('spentTime').value, 10);
+            const date = document.getElementById('date').value;
+
+            if (task && spentTime && date) {
+                try {
+                    await performFetch('/add_time_entry', {task, spent_time: spentTime, date});
+                    location.reload();
+                } catch (error) {
+                    console.error(`An error occurred: ${error}`);
+                }
+            } else {
+                alert('Bitte füllen Sie alle Felder aus.');
+            }
+        });
+
+        // Edit time entry for user
+        document.querySelectorAll(".edit-time-entry-button").forEach(button => {
+            button.addEventListener("click", function () {
+                const row = this.closest('tr');
+                const currentTask = row.querySelector('td:nth-child(2)').textContent.trim();
+                const currentSpentTime = row.querySelector('td:nth-child(3)').textContent.trim();
+                const currentDate = row.querySelector('td:nth-child(4)').textContent.trim();
+
+                // Populate the modal fields with current data
+                document.getElementById('editTask').value = currentTask;
+                document.getElementById('editSpentTime').value = currentSpentTime;
+                document.getElementById('editDate').value = currentDate;
+
+                // Show modal
+                const editEntryModal = new bootstrap.Modal(document.getElementById('editEntryModal'));
+                editEntryModal.show();
+
+                // Listen for the save event in the modal
+                document.getElementById('saveEditEntry').addEventListener('click', async function () {
+                    const entryId = parseInt(button.getAttribute("data-entry-id"), 10);
+
+                    const updatedTask = document.getElementById('editTask').value;
+                    const updatedSpentTime = parseInt(document.getElementById('editSpentTime').value, 10);
+                    const updatedDate = document.getElementById('editDate').value;
+
+                    await performFetch('/edit_time_entry', {
+                        id: entryId,
+                        task: updatedTask,
+                        spent_time: updatedSpentTime,
+                        date: updatedDate
+                    });
+                    location.reload();
+                });
+            });
+        });
+
+        // Delete time entries
+        const deleteTimeButtons = document.querySelectorAll(".delete-time-entry-button");
+        deleteTimeButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const entryId = this.getAttribute("data-entry-id");
+                if (entryId) {
+                    deleteEntry(entryId);
+                }
+            });
+        });
+
+        async function deleteEntry(entryId) {
+            try {
+                await performFetch('/delete_time_entry', {id: parseInt(entryId)});
+                location.reload();
+            } catch (error) {
+                console.error(`An error occurred: ${error}`);
+            }
+        }
+
+        // Add new absence entry
+        document.getElementById('saveNewAbsence').addEventListener('click', async function () {
+            const absenceReason = document.getElementById('absenceReason').value;
+            const absenceDate = document.getElementById('absenceDate').value;
+
+            if (absenceReason && absenceDate) {
+                try {
+                    await performFetch('/add_absence_entry', {reason: absenceReason, absence_date: absenceDate});
+                    location.reload();
+                } catch (error) {
+                    console.error(`An error occurred: ${error}`);
+                }
+            } else {
+                alert('Bitte füllen Sie alle Felder aus.');
+            }
+        });
+
+        // Edit absence entry for user
+        document.querySelectorAll(".edit-absence-button").forEach(button => {
+            button.addEventListener("click", function () {
+                const row = this.closest('tr');
+                const currentReason = row.querySelector('td:nth-child(2)').textContent.trim();
+                const currentDate = row.querySelector('td:nth-child(3)').textContent.trim();
+
+                // Populate the modal fields with current data
+                document.getElementById('editAbsenceReason').value = currentReason;
+                document.getElementById('editAbsenceDate').value = currentDate;
+
+                // Show modal
+                const editAbsenceModal = new bootstrap.Modal(document.getElementById('editAbsenceModal'));
+                editAbsenceModal.show();
+
+                // Listen for the save event in the modal
+                document.getElementById('saveEditAbsence').addEventListener('click', async function () {
+                    const absenceId = parseInt(button.getAttribute("data-absence-id"), 10);
+
+                    const updatedAbsenceDate = document.getElementById('editAbsenceDate').value;
+                    const updatedAbsenceReason = document.getElementById('editAbsenceReason').value;
+
+                    await performFetch('/edit_absence_entry', {
+                        id: absenceId,
+                        absence_date: updatedAbsenceDate,
+                        reason: updatedAbsenceReason
+                    });
+                    location.reload();
+                });
+            });
+        });
+
+        // Delete absence entries
+        const deleteAbsenceButtons = document.querySelectorAll(".delete-absence-button");
+        deleteAbsenceButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const absenceId = this.getAttribute("data-absence-id");
+                if (absenceId) {
+                    deleteAbsenceEntry(absenceId);
+                }
+            });
+        });
+
+        async function deleteAbsenceEntry(absenceId) {
+            try {
+                await performFetch('/delete_absence_entry', {id: parseInt(absenceId)});
+                location.reload();
+            } catch (error) {
+                console.error(`An error occurred: ${error}`);
+            }
+        }
+
+        function sortTable(table, columnIndex, ascending) {
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            const comparer = (a, b) => {
+                const valA = a.children[columnIndex].innerText.trim();
+                const valB = b.children[columnIndex].innerText.trim();
+
+                return ascending ? valA.localeCompare(valB, undefined, {numeric: true}) :
+                    valB.localeCompare(valA, undefined, {numeric: true});
+            };
+
+            tbody.append(...rows.sort(comparer));
+        }
+
+        document.querySelectorAll(".sortable").forEach(sortableHeader => {
+            const tableElement = sortableHeader.closest("table");
+            const headerIndex = Array.prototype.indexOf.call(sortableHeader.parentElement.children, sortableHeader);
+
+            sortableHeader.addEventListener("click", () => {
+                const isAscending = sortableHeader.classList.contains("th-sort-asc");
+                sortTable(tableElement, headerIndex, !isAscending);
+                sortableHeader.classList.toggle("th-sort-asc", !isAscending);
+                sortableHeader.classList.toggle("th-sort-desc", isAscending);
+            });
+        });
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,133 @@
+{% extends "app" %}
+{% import "navbar" as navbar %}
+
+{% block content %}
+
+{{ navbar::navbar(username=username, authority=authority) }}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Einstellungen
+                </div>
+                <div class="card-body">
+                    <!-- Toasts for notifications -->
+                    <div id="notificationToast" class="toast position-fixed top-0 end-0 me-3 mt-3" role="alert"
+                         aria-live="assertive" aria-atomic="true">
+                        <div id="notificationToastBody" class="toast-body">
+                            <!-- Notification content will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Password change section -->
+                    <h3>Passwort ändern</h3>
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Aktuelles Passwort</label>
+                        <input type="password" class="form-control" id="currentPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Neues Passwort</label>
+                        <input type="password" class="form-control" id="newPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Neues Passwort wiederholen</label>
+                        <input type="password" class="form-control" id="confirmPassword">
+                    </div>
+                    <button type="button" class="btn btn-primary" id="changePassword">Ändern</button>
+
+                    <hr>
+
+                    <!-- Email change section -->
+                    <h3>E-Mail ändern</h3>
+                    <div class="mb-3">
+                        <label for="currentEmail" class="form-label">Aktuelle E-Mail</label>
+                        <input type="email" class="form-control" id="currentEmail" value="{{ email }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newEmail" class="form-label">Neue E-Mail</label>
+                        <input type="email" class="form-control" id="newEmail">
+                    </div>
+                    <button type="button" class="btn btn-primary" id="changeEmail">Ändern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Utility function for fetch requests
+    async function performFetch(endpoint, data) {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data),
+        });
+        const result = await response.text();
+        return {response, result};
+    }
+
+    // Utility function to clear input fields
+    function clearFields(fieldIds) {
+        fieldIds.forEach(id => {
+            const field = document.getElementById(id);
+            field.value = '';
+        });
+    }
+
+    // Initialize showToast function
+    function showToast(message, color, redirectAfter = false) {
+        const toast = document.getElementById('notificationToast');
+        const toastBody = document.getElementById('notificationToastBody');
+        toastBody.textContent = message;
+        toastBody.style.backgroundColor = color === 'green' ? 'darkgreen' : 'red';
+        toastBody.style.color = 'white';
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            if (color === 'green' && redirectAfter) window.location.href = '/logout';
+        }, 3000);
+    }
+
+    // Event listener for password change
+    document.getElementById('changePassword').addEventListener('click', async () => {
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (currentPassword && newPassword && confirmPassword) {
+            if (newPassword === confirmPassword) {
+                const {response, result} = await performFetch('/change_password', {
+                    current_password: currentPassword,
+                    new_password: newPassword,
+                    confirm_password: confirmPassword
+                });
+                response.ok ? showToast(result, 'green', true) : showToast(result, 'red');
+                clearFields(['currentPassword', 'newPassword', 'confirmPassword']);
+            } else {
+                showToast('Die neuen Passwörter stimmen nicht überein.', 'red');
+            }
+        } else {
+            showToast('Bitte füllen Sie alle Passwort-Felder aus.', 'red');
+        }
+    });
+
+    // Event listener for email change
+    document.getElementById('changeEmail').addEventListener('click', async () => {
+        const newEmail = document.getElementById('newEmail').value;
+        const currentEmail = document.getElementById('currentEmail');
+
+        if (newEmail) {
+            const {response, result} = await performFetch('/change_email', {new_email: newEmail});
+            response.ok ? showToast(result, 'green') : showToast(result, 'red');
+            if (response.ok) currentEmail.value = newEmail;
+            clearFields(['newEmail']);
+        } else {
+            showToast('Bitte füllen Sie alle E-Mail-Felder aus.', 'red');
+        }
+    });
+</script>
+
+{% endblock content %}

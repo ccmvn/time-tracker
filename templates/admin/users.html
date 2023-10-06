@@ -1,0 +1,81 @@
+{% extends "app" %}
+{% import "navbar" as navbar %}
+
+{% block content %}
+
+{{ navbar::navbar(username=username, authority=authority) }}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Adminbereich
+                </div>
+                <div class="card-body">
+                    <table id="user-table" class="table">
+                        <thead>
+                        <tr>
+                            <th class="sortable" data-sort="id">ID <span class="sort-arrow">&#8597;</span></th>
+                            <th class="sortable" data-sort="username">Username <span class="sort-arrow">&#8597;</span>
+                            </th>
+                            <th class="sortable" data-sort="email">Email <span class="sort-arrow">&#8597;</span></th>
+                            <th class="sortable" data-sort="authority">Authority <span class="sort-arrow">&#8597;</span>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="badge {% if user.authority == 'ADMINISTRATOR' %}bg-danger{% else %}bg-primary{% endif %}">
+                                    {{ user.authority }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/admin/user_details/{{ user.id }}" class="btn btn-secondary">Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sortTable(table, columnIndex, ascending) {
+        const tbody = table.tBodies[0];
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        const comparer = (a, b) => {
+            const valA = a.children[columnIndex].innerText.trim();
+            const valB = b.children[columnIndex].innerText.trim();
+
+            return ascending ? valA.localeCompare(valB, undefined, {numeric: true}) :
+                valB.localeCompare(valA, undefined, {numeric: true});
+        };
+
+        tbody.append(...rows.sort(comparer));
+    }
+
+    document.querySelectorAll(".sortable").forEach(sortableHeader => {
+        const tableElement = sortableHeader.closest("table");
+        const headerIndex = Array.prototype.indexOf.call(sortableHeader.parentElement.children, sortableHeader);
+
+        sortableHeader.addEventListener("click", () => {
+            const isAscending = sortableHeader.classList.contains("th-sort-asc");
+            sortTable(tableElement, headerIndex, !isAscending);
+            sortableHeader.classList.toggle("th-sort-asc", !isAscending);
+            sortableHeader.classList.toggle("th-sort-desc", isAscending);
+        });
+    });
+</script>
+
+{% endblock content %}
