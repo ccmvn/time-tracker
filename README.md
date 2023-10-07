@@ -11,7 +11,7 @@ absences.
 - SQLite for the database 🗄️
 - Tera for templating 📝
 
-## 🚀 Full Features List through Routes
+## 🚀 Full Features List
 
 ### User Features
 
@@ -50,28 +50,34 @@ To install and run the project, follow these steps:
 
   ```sql
   -- Table structure for absence_entries
-  CREATE TABLE absence_entries (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      absence_date TEXT NOT NULL,
-      reason TEXT,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-  );
+CREATE TABLE absence_entries
+(
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id      INTEGER NOT NULL,
+    absence_date TEXT    NOT NULL,
+    reason       TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
 
-  -- Table structure for time_entries
-  CREATE TABLE time_entries (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      task TEXT,
-      spent_time INTEGER,
-      date TEXT
-  );
+-- Table structure for time_entries
+CREATE TABLE time_entries
+(
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER,
+    task       TEXT,
+    spent_time INTEGER,
+    date       TEXT
+);
 
-  -- Table structure for users
-  CREATE TABLE users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL,
-      email TEXT NOT NULL UNIQUE,
-      authority TEXT DEFAULT 'EMPLOYEE'
-  );
+-- Table structure for users
+CREATE TABLE users
+(
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    username  TEXT NOT NULL UNIQUE,
+    password  TEXT NOT NULL,
+    email     TEXT NOT NULL UNIQUE,
+    authority TEXT DEFAULT 'EMPLOYEE'
+);
+```
+
+</details>
