@@ -76,7 +76,6 @@ pub fn is_strong_password(password: &str) -> bool {
         && has_digit.is_match(password)
 }
 
-
 #[post("/change_email")]
 pub async fn change_email(
     db: web::Data<DatabaseConnection>,
