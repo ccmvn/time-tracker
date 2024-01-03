@@ -1,3 +1,15 @@
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.git
 .idea
-/target
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Cargo files
+Cargo.lock
+target
